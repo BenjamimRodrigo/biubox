@@ -97,7 +97,6 @@ class MyGame extends FlameGame with KeyboardEvents, HasCollisionDetection {
         }
         return KeyEventResult.handled;
       case LogicalKeyboardKey.space:
-        // add(Box());
         _player.add(
           SequenceEffect([
             MoveByEffect(Vector2(0, -30), EffectController(duration: 0.2)),

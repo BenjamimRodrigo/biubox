@@ -1,5 +1,6 @@
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
+import 'package:flame/effects.dart';
 import 'package:flutter/services.dart';
 import 'package:biubox/game.dart';
 
@@ -30,24 +31,24 @@ class Player extends SpriteComponent
   @override
   bool onKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
     horizontalMovement = 0;
-    final isLeftKeyPressed =
-        keysPressed.contains(LogicalKeyboardKey.keyA) ||
-        keysPressed.contains(LogicalKeyboardKey.arrowLeft);
-    final isRightKeyPressed =
-        keysPressed.contains(LogicalKeyboardKey.keyD) ||
-        keysPressed.contains(LogicalKeyboardKey.arrowRight);
+    final isLeftKeyPressed = keysPressed.contains(LogicalKeyboardKey.arrowLeft);
+    final isRightKeyPressed = keysPressed.contains(LogicalKeyboardKey.arrowRight);
 
     horizontalMovement += isLeftKeyPressed ? -1 : 0;
     horizontalMovement += isRightKeyPressed ? 1 : 0;
 
     hasJumped = keysPressed.contains(LogicalKeyboardKey.space);
 
+    if(isLeftKeyPressed) {
+      if (!isFlippedHorizontally) {
+          flipHorizontallyAroundCenter();
+        }
+        if (position.x > 70) {
+          add(MoveByEffect(Vector2(-30, 0), EffectController(duration: 1)));
+        }
+    }
+
     return super.onKeyEvent(event, keysPressed);
   }
 
-  void _applyGravity(double dt) {
-    velocity.y += _gravity;
-    velocity.y = velocity.y.clamp(-_jumpForce, _terminalVelocity);
-    position.y += velocity.y * dt;
-  }
 }
