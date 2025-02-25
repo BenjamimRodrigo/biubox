@@ -1,7 +1,8 @@
+import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:biubox/game.dart';
 
-class Box extends SpriteComponent with HasGameRef<MyGame> {
+class Box extends SpriteComponent with HasGameRef<MyGame>, CollisionCallbacks {
   final _positionToFree;
   Box(this._positionToFree);
 
@@ -29,5 +30,11 @@ class Box extends SpriteComponent with HasGameRef<MyGame> {
       }
     }
     super.update(dt);
+  }
+
+  @override
+  void onCollision(Set<Vector2> points, PositionComponent other) {
+    super.onCollision(points, other);
+    print("Colidiu com algo!");
   }
 }

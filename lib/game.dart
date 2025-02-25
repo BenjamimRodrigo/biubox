@@ -1,15 +1,14 @@
 import 'dart:math';
 
+import 'package:biubox/box.dart';
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
 import 'package:flame/events.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:biubox/box.dart';
 import 'package:biubox/crane.dart';
 import 'package:biubox/player.dart';
-import 'package:flame_audio/flame_audio.dart';
 
 class MyGame extends FlameGame with KeyboardEvents, HasCollisionDetection {
   final Player _player = Player();
@@ -62,6 +61,13 @@ class MyGame extends FlameGame with KeyboardEvents, HasCollisionDetection {
     _scoreText.text = 'Score: $_score';
   }
 
+  void gameOver() {
+    _scoreText.text = 'Game Over! Final Score: $_score';
+    _scoreText.position = Vector2(canvasSize.x / 2 - 100, canvasSize.y / 2 - 150);
+    _score = 0;
+    Future.delayed(Duration(milliseconds: 2), () => pauseEngine());
+  }
+
   @override
   KeyEventResult onKeyEvent(
     KeyEvent event,
@@ -104,6 +110,7 @@ class MyGame extends FlameGame with KeyboardEvents, HasCollisionDetection {
           ]),
         );
         //FlameAudio.play('assets/audio/player_jump.ogg');
+        gameOver();
         return KeyEventResult.handled;
       default:
         return KeyEventResult.ignored;

@@ -25,7 +25,7 @@ class Crane extends SpriteComponent with HasGameRef<MyGame> {
   @override
   void update(double dt) {
     if (position.x == positionToFreeBox.x) {
-      Future.delayed(Duration(seconds: 2), () => position.x++);
+      Future.delayed(Duration(seconds: 1), () => position.x++);
     } else {
       position.x++;
     }

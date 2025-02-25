@@ -1,3 +1,4 @@
+import 'package:biubox/box.dart';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
@@ -32,23 +33,32 @@ class Player extends SpriteComponent
   bool onKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
     horizontalMovement = 0;
     final isLeftKeyPressed = keysPressed.contains(LogicalKeyboardKey.arrowLeft);
-    final isRightKeyPressed = keysPressed.contains(LogicalKeyboardKey.arrowRight);
+    final isRightKeyPressed = keysPressed.contains(
+      LogicalKeyboardKey.arrowRight,
+    );
 
     horizontalMovement += isLeftKeyPressed ? -1 : 0;
     horizontalMovement += isRightKeyPressed ? 1 : 0;
 
     hasJumped = keysPressed.contains(LogicalKeyboardKey.space);
 
-    if(isLeftKeyPressed) {
+    if (isLeftKeyPressed) {
       if (!isFlippedHorizontally) {
-          flipHorizontallyAroundCenter();
-        }
-        if (position.x > 70) {
-          add(MoveByEffect(Vector2(-30, 0), EffectController(duration: 1)));
-        }
+        flipHorizontallyAroundCenter();
+      }
+      if (position.x > 70) {
+        add(MoveByEffect(Vector2(-30, 0), EffectController(duration: 1)));
+      }
     }
 
     return super.onKeyEvent(event, keysPressed);
   }
 
+  @override
+  void onCollision(Set<Vector2> points, PositionComponent other) {
+    super.onCollision(points, other);
+    if (other is Box) {
+      print("Colidiu com uma caixa");
+    }
+  }
 }
