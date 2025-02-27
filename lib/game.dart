@@ -1,6 +1,5 @@
 import 'dart:math';
 
-import 'package:biubox/box.dart';
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
 import 'package:flame/events.dart';
@@ -28,6 +27,7 @@ class MyGame extends FlameGame with KeyboardEvents, HasCollisionDetection {
 
   @override
   Future<void> onLoad() async {
+
     // Player component
     _player.position = Vector2(canvasSize.x / 2, canvasSize.y - 37);
     _player.angle = 0;
@@ -47,9 +47,8 @@ class MyGame extends FlameGame with KeyboardEvents, HasCollisionDetection {
     super.update(dt);
     _timeSinceLastCrane += dt;
     if (_timeSinceLastCrane > _timeToNextCrane) {
-      print("Time to next crane: $_timeToNextCrane seconds");
       final random = Random();
-      _timeToNextCrane = random.nextInt(10 - 1);
+      _timeToNextCrane = random.nextInt(5 - 2);
       _timeSinceLastCrane = 0;
       add(Crane());
       incrementScore(1);
@@ -69,15 +68,11 @@ class MyGame extends FlameGame with KeyboardEvents, HasCollisionDetection {
   }
 
   @override
-  KeyEventResult onKeyEvent(
-    KeyEvent event,
-    Set<LogicalKeyboardKey> keysPressed,
-  ) {
+  KeyEventResult onKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
     final isKeyDown = event is KeyDownEvent;
     if (!isKeyDown) {
       return KeyEventResult.ignored;
     }
-    print("Player: ${_player.position}  //  Canvas: ${canvasSize}");
     switch (event.logicalKey) {
       case LogicalKeyboardKey.arrowLeft:
         if (!_player.isFlippedHorizontally) {
@@ -110,7 +105,6 @@ class MyGame extends FlameGame with KeyboardEvents, HasCollisionDetection {
           ]),
         );
         //FlameAudio.play('assets/audio/player_jump.ogg');
-        gameOver();
         return KeyEventResult.handled;
       default:
         return KeyEventResult.ignored;

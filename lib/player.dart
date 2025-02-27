@@ -19,13 +19,18 @@ class Player extends SpriteComponent
   Vector2 startingPosition = Vector2.zero();
   Vector2 velocity = Vector2.zero();
   bool isOnGround = false;
-  bool hasJumped = false;
+  bool isJumping = false;
+
+  late ShapeHitbox hitbox;
 
   @override
   Future<void> onLoad() async {
     sprite = await Sprite.load('player.png');
     size = Vector2(32, 50);
     position = Vector2(position.x, position.y - 12);
+
+    hitbox = RectangleHitbox()..renderShape = false;
+    add(hitbox);
     return super.onLoad();
   }
 
@@ -40,7 +45,7 @@ class Player extends SpriteComponent
     horizontalMovement += isLeftKeyPressed ? -1 : 0;
     horizontalMovement += isRightKeyPressed ? 1 : 0;
 
-    hasJumped = keysPressed.contains(LogicalKeyboardKey.space);
+    isJumping = keysPressed.contains(LogicalKeyboardKey.space);
 
     if (isLeftKeyPressed) {
       if (!isFlippedHorizontally) {
@@ -58,7 +63,7 @@ class Player extends SpriteComponent
   void onCollision(Set<Vector2> points, PositionComponent other) {
     super.onCollision(points, other);
     if (other is Box) {
-      print("Colidiu com uma caixa");
+      // print("Colidiu com uma caixa");
     }
   }
 }
