@@ -2,8 +2,6 @@ import 'package:biubox/box.dart';
 import 'package:biubox/constants.dart';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
-import 'package:flame/effects.dart';
-import 'package:flutter/services.dart';
 import 'package:biubox/game.dart';
 
 enum PlayerState { idle, running, jumping, falling, appearing, disappearing }

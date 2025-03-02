@@ -8,10 +8,6 @@ class Box extends SpriteComponent with HasGameRef<MyGame>, CollisionCallbacks {
   final int _positionToFree;
   Box(this._positionToFree);
 
-  double horizontalMovement = 0;
-  double moveSpeed = 100;
-  Vector2 startingPosition = Vector2.zero();
-  Vector2 velocity = Vector2.zero();
   bool isFalling = false;
   bool isOnGround = false;
   bool isOnPositionToFree = false;
@@ -32,10 +28,9 @@ class Box extends SpriteComponent with HasGameRef<MyGame>, CollisionCallbacks {
 
   @override
   void update(double dt) {
-    isOnPositionToFree = position.x == _positionToFree + 16;
+    isOnPositionToFree = position.x == _positionToFree;
     isOnGround = position.y == gameRef.canvasSize.y - size.y;
     isOnCrane = position.y == 40;
-    // print("Caixa ${position.y} // ${gameRef.canvasSize.y - size.y}");
 
     if (isOnPositionToFree && isOnCrane) {
       isFalling = true;
@@ -64,7 +59,7 @@ class Box extends SpriteComponent with HasGameRef<MyGame>, CollisionCallbacks {
       }
     } else if (other is Box) {
       if (isFalling) {
-        print("COLIDIU COM OUTRA CAIXA! ${other.position} ${position}");
+        // print("COLIDIU COM OUTRA CAIXA! ${other.position} ${position}");
         isFalling = false;
         isOnGround = true;
         position.y = other.position.y - size.y;
