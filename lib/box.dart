@@ -1,3 +1,4 @@
+import 'package:biubox/constants.dart';
 import 'package:biubox/player.dart';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
@@ -21,12 +22,11 @@ class Box extends SpriteComponent with HasGameRef<MyGame>, CollisionCallbacks {
   @override
   Future<void> onLoad() async {
     sprite = await Sprite.load('box.png');
-    size = Vector2(32, 32);
-    position = Vector2(-84, 40);
+    size = boxSize;
+    position = boxPosition;
     hitbox = RectangleHitbox();
     add(hitbox);
     print("Position to free: $_positionToFree");
-
     return super.onLoad();
   }
 
