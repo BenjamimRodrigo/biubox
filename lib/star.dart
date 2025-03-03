@@ -3,24 +3,17 @@ import 'package:biubox/droppable_item.dart';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 
-class Box extends DroppableItem {
-  Box({required super.positionToFree}) {
+class Star extends DroppableItem {
+  Star({required super.positionToFree}) {
     size = boxSize;
     position = boxPosition;
-  }
-
-  Box.positioned(positionValue) : super.positioned(positionValue, 0) {
-    size = boxSize;
-    isOnCrane = false;
-    isOnGround = true;
-    isFalling = false;
   }
 
   late ShapeHitbox hitbox;
 
   @override
   Future<void> onLoad() async {
-    sprite = await Sprite.load('box.png');
+    sprite = await Sprite.load('star.png');
     hitbox = RectangleHitbox();
     add(hitbox);
     return super.onLoad();
