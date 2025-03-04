@@ -5,7 +5,7 @@ Os comandos são simples. Basta utilizar as setas para movimentar o personagem. 
 A movimentação é bastante lenta, emulando perfeitamente o jogo nos antigos celulares Siemes A55. Há ainda um botão para pausar a partida ou iniciar uma nova, caso o jogador prefira.
 Stack Attack é um jogo extremamente difícil se comparado a jogos dos dias atuais. Um verdadeiro exercício de paciência. É o jogo ideal para matar a nostalgia daquele seu antigo celular.
 
-## Getting Started
+## Getting Started 
 
 This project is a starting point for a Flutter application.
 
