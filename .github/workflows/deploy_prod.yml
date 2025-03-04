@@ -23,7 +23,7 @@ jobs:
       run: flutter build web --release
 
     - name: 📂 Sync files
-      uses: genietim/ftp-action@releases/v4
+      uses: GenieTim/ftp-action@v4.0.1
       with:
         host: ${{ secrets.FTP_SERVER }}
         user: ${{ secrets.FTP_USER }}
