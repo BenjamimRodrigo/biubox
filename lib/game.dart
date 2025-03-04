@@ -99,11 +99,11 @@ class MyGame extends FlameGame with KeyboardEvents, HasCollisionDetection {
   }
 
   void gameOver() {
-    /* isGameOver = true;
+    isGameOver = true;
     _scoreText.text = 'Game Over! Final Score: $_score';
     _scoreText.position = Vector2(gameWidth / 2 - 100, gameHeight / 2 - 150);
     _score = 0;
-    Future.delayed(Duration(milliseconds: 2), () => pauseEngine()); */
+    Future.delayed(Duration(milliseconds: 2), () => pauseEngine());
   }
 
   @override
