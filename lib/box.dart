@@ -11,9 +11,6 @@ class Box extends DroppableItem {
 
   Box.positioned(positionValue) : super.positioned(positionValue, 0) {
     size = boxSize;
-    isOnCrane = false;
-    isOnGround = true;
-    isFalling = false;
   }
 
   late ShapeHitbox hitbox;

@@ -1,3 +1,4 @@
+import 'package:biubox/box.dart';
 import 'package:biubox/constants.dart';
 import 'package:biubox/game.dart';
 import 'package:biubox/ground.dart';
@@ -12,6 +13,9 @@ class DroppableItem extends SpriteComponent
 
   DroppableItem.positioned(Vector2 positionValue, this.positionToFree) {
     position = positionValue;
+    isOnCrane = false;
+    isOnGround = true;
+    isFalling = false;
   }
 
   bool isOnGround = false;
@@ -28,7 +32,10 @@ class DroppableItem extends SpriteComponent
   void update(double dt) {
     isOnPositionToFree = position.x == positionToFree;
     if (isOnPositionToFree && isOnCrane) {
-      if (_canFreeAtPosition()) {
+      if (_canDropAtPosition()) {
+        if(this is Box) {
+          gameRef.incrementScore(scoreAtDropBox);
+        }
         isOnCrane = false;
         isFalling = true;
       }
@@ -45,23 +52,20 @@ class DroppableItem extends SpriteComponent
     super.update(dt);
   }
 
-  bool _canFreeAtPosition() {
-    int qtd = 0;
+  bool _canDropAtPosition() {
+    bool canDrop = true;
     gameRef.componentsAtPoint(Vector2(positionToFree, 64)).forEach((element) {
       if (element is DroppableItem) {
         if (!element.isOnCrane && !element.isFalling) {
-          qtd++;
+          canDrop = false;
         }
       }
     });
-    return qtd == 0;
+    return canDrop;
   }
 
   @override
-  void onCollisionStart(
-    Set<Vector2> intersectionPoints,
-    PositionComponent other,
-  ) {
+  void onCollisionStart(Set<Vector2> intersectionPoints, PositionComponent other) {
     if (other is DroppableItem) {
       if (isFalling && !other.isOnCrane) {
         isFalling = false;
@@ -70,6 +74,7 @@ class DroppableItem extends SpriteComponent
     } else if (other is Ground) {
       isOnGround = true;
       isFalling = false;
+      gameRef.verifyIfLastLineComplete();
     }
     super.onCollisionStart(intersectionPoints, other);
   }

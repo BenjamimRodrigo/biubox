@@ -13,7 +13,7 @@ class Crane extends SpriteComponent with HasGameRef<MyGame> {
     position = cranePosition;
     final random = Random();
     positionToFreeItem = (random.nextInt(26) * 33);
-    final bool addAStar = random.nextDouble() > 0.7;
+    final bool addAStar = random.nextDouble() > 0.96;
     if (addAStar) {
       gameRef.add(Star(positionToFree: positionToFreeItem));
     } else {
