@@ -42,7 +42,6 @@ class MyGame extends FlameGame with KeyboardEvents, HasCollisionDetection {
   Future<void> onLoad() async {
     // Player component
     _player.position = playerPosition;
-    _player.angle = 0;
     add(_player);
 
     // Score component
@@ -53,44 +52,29 @@ class MyGame extends FlameGame with KeyboardEvents, HasCollisionDetection {
     // Paused text component
     add(_pausedText);
 
-    // print("Sreen size: $canvasSize");
-
-    //loadInitialBoxes();
-
     // Ground
     add(Ground());
     return super.onLoad();
   }
 
-  void loadInitialBoxes() {
-    final random = Random();
-    for (var i = 33; i < gameWidth; i += 33) {
-      //final randomPosition = (random.nextInt(gameWidth.toInt() ~/ 33) * 33).toInt() + 1;
-      final randomPosition = i;
-      //print("Random position: $randomPosition");
-      add(
-        Box.positioned(
-          Vector2(randomPosition.toDouble(), gameHeight - boxSize.x),
-        ),
-      );
-    }
-  }
-
   void verifyIfLastLineComplete() {
-    int positionFilled = 0;
-    for (var i = 0; i < gameWidth; i += 33) {
-      final position = Vector2(i * 1.0 + 1, gameHeight - boxSize.y + 10);
-      componentsAtPoint(position).forEach((element) {
-        if (element is DroppableItem) {
-          positionFilled++;
+    bool itemAtPosition = false;
+    for (double i = 0; i < gameWidth; i += 33) {
+      final position = Vector2(i, gameHeight - boxSize.y);
+      final itemsAtPosition = componentsAtPoint(position);
+      itemAtPosition = false;
+      for (final item in itemsAtPosition) {
+        if (item is DroppableItem) {
+          itemAtPosition = true;
+          break;
         }
-      });
+      }
+      if (!itemAtPosition) {
+        return;
+      }
     }
-    if (positionFilled == 26) {
-      _removeAllItemsAtLastLine();
-      _moveDownAllItems();
-      incrementScore(scoreAtDestroyLineItems);
-    }
+    _removeAllItemsAtLastLine();
+    _moveDownAllItems();
   }
 
   void incrementScore(int score) {
@@ -107,7 +91,10 @@ class MyGame extends FlameGame with KeyboardEvents, HasCollisionDetection {
   }
 
   @override
-  KeyEventResult onKeyEvent(KeyEvent event,Set<LogicalKeyboardKey> keysPressed) {
+  KeyEventResult onKeyEvent(
+    KeyEvent event,
+    Set<LogicalKeyboardKey> keysPressed,
+  ) {
     final isKeyDown = event is KeyDownEvent;
     if (!isKeyDown) {
       return KeyEventResult.ignored;
@@ -120,15 +107,20 @@ class MyGame extends FlameGame with KeyboardEvents, HasCollisionDetection {
           _player.isLookingRight = false;
           return KeyEventResult.handled;
         }
-        if(_player.isWalking || !_player.canWalkToLeft()) {
+        if (_player.isWalking || !_player.canWalkToLeft()) {
           return KeyEventResult.ignored;
         }
         currentPlayerPosition -= 33;
         _player.isWalking = true;
         _player.add(
-          MoveByEffect(Vector2(-33, 0), EffectController(duration: 1), onComplete: () {
-            _player.isWalking = false;
-          }),
+          MoveByEffect(
+            Vector2(-33, 0),
+            EffectController(duration: 1),
+            onComplete: () {
+              _player.isWalking = false;
+              _player.isFalling = _player.canFall();
+            },
+          ),
         );
         return KeyEventResult.handled;
 
@@ -139,36 +131,34 @@ class MyGame extends FlameGame with KeyboardEvents, HasCollisionDetection {
           _player.isLookingLeft = false;
           return KeyEventResult.handled;
         }
-        if(_player.isWalking || !_player.canWalkToRight()) {
+        if (_player.isWalking || !_player.canWalkToRight()) {
           return KeyEventResult.ignored;
         }
         currentPlayerPosition += 33;
         _player.isWalking = true;
         _player.add(
-          MoveByEffect(Vector2(33, 0), EffectController(duration: 1), onComplete: () {
-            _player.isWalking = false;
-          }),
+          MoveByEffect(
+            Vector2(33, 0),
+            EffectController(duration: 1),
+            onComplete: () {
+              _player.isWalking = false;
+              _player.isFalling = _player.canFall();
+            },
+          ),
         );
         return KeyEventResult.handled;
+      // Jumpping
       case LogicalKeyboardKey.arrowUp:
+        if (_player.isJumping || _player.isFalling) {
+          return KeyEventResult.ignored;
+        }
         _player.isJumping = true;
         _player.isFalling = false;
-        _player.add(
-          SequenceEffect([
-            MoveByEffect(Vector2(0, -33), EffectController(duration: 0.2), onComplete: () {
-              _player.isFalling = true;
-            }),
-            MoveByEffect(
-              Vector2(0, 33),
-              EffectController(duration: 0.2),
-              onComplete: () {
-                _player.isJumping = false;
-                _player.isFalling = false;
-              }
-            ),
-          ]),
-        );
-        //FlameAudio.play('assets/audio/player_jump.ogg');
+        _player.isOnGround = false;
+        Future.delayed(Duration(milliseconds: 500), () {
+          _player.isFalling = true;
+          _player.isJumping = false;
+        });
         return KeyEventResult.handled;
       case LogicalKeyboardKey.space:
         if (paused) {
@@ -192,19 +182,12 @@ class MyGame extends FlameGame with KeyboardEvents, HasCollisionDetection {
     }
   }
 
-  /* @override
-  void onGameResize(Vector2 size) {
-    _player.position = Vector2(_player.position.x, size.y - 50);
-    super.onGameResize(size);
-  } */
-
   @override
   void update(double dt) {
     super.update(dt);
     _timeSinceLastCrane += dt;
     if (_timeSinceLastCrane >= _timeToNextCrane) {
-      //_timeToNextCrane = Random().nextDouble() * 4.8 + 1.3;
-      _timeToNextCrane = 1.5;
+      _timeToNextCrane = Random().nextDouble() * 1.7 + 1.1;
       _timeSinceLastCrane = 0;
       if (_getCranesCount() < 20) {
         add(Crane());
@@ -230,6 +213,7 @@ class MyGame extends FlameGame with KeyboardEvents, HasCollisionDetection {
         }
       });
     }
+    incrementScore(scoreAtDestroyLineItems);
   }
 
   int _getCranesCount() {
@@ -251,8 +235,7 @@ class MyGame extends FlameGame with KeyboardEvents, HasCollisionDetection {
           continue;
         }
         final duration = Duration(
-          milliseconds:
-              (gameHeight - positionComponent.position.y).round(),
+          milliseconds: (gameHeight - positionComponent.position.y).round(),
         );
         Future.delayed(duration, () {
           positionComponent.isFalling = true;
@@ -268,6 +251,8 @@ class MyGame extends FlameGame with KeyboardEvents, HasCollisionDetection {
         Future.delayed(duration, () {
           positionComponent.isFalling = true;
         });
+      } else if (positionComponent is Player) {
+        positionComponent.isFalling = true;
       }
     }
   }

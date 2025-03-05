@@ -79,8 +79,4 @@ class DroppableItem extends SpriteComponent
     super.onCollisionStart(intersectionPoints, other);
   }
 
-  @override
-  void onCollisionEnd(PositionComponent other) {
-    super.onCollisionEnd(other);
-  }
 }
