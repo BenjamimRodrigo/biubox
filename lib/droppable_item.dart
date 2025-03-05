@@ -75,6 +75,7 @@ class DroppableItem extends SpriteComponent
       isOnGround = true;
       isFalling = false;
       gameRef.verifyIfLastLineComplete();
+      print("Box position: ${position}");
     }
     super.onCollisionStart(intersectionPoints, other);
   }

@@ -5,6 +5,7 @@ import 'package:biubox/star.dart';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:biubox/game.dart';
+import 'package:flame/effects.dart';
 
 class Player extends SpriteComponent
     with HasGameRef<MyGame>, KeyboardHandler, CollisionCallbacks {
@@ -40,39 +41,108 @@ class Player extends SpriteComponent
   }
 
   @override
-  void onCollisionStart(Set<Vector2> intersectionPoints, PositionComponent other) {
+  void onCollisionStart(
+    Set<Vector2> intersectionPoints,
+    PositionComponent other,
+  ) {
     if (other is Box) {
       if (other.isFalling && isJumping) {
         gameRef.remove(other);
         gameRef.incrementScore(scoreAtDestroyBox);
+        isFalling = true;
+        isJumping = false;
+        return;
       }
       if (other.isFalling && !isJumping) {
         other.isFalling = false;
         gameRef.gameOver();
+        return;
       }
       if (isFalling && !other.isFalling) {
         isFalling = false;
-        // position.y = other.position.y;
+        return;
       }
     } else if (other is Star) {
       gameRef.remove(other);
       gameRef.incrementScore(scoreAtGetStar);
-    } else if(other is Ground) {
+    } else if (other is Ground) {
       isFalling = false;
       isOnGround = true;
     }
     super.onCollisionStart(intersectionPoints, other);
   }
 
+  void jump() {
+    if (isJumping || isFalling) {
+      return;
+    }
+    isJumping = true;
+    isFalling = false;
+    isOnGround = false;
+    Future.delayed(Duration(milliseconds: 500), () {
+      if (!isOnGround) {
+        isFalling = true;
+        isJumping = false;
+      }
+    });
+  }
+
+  void walkToRight() {
+    if (isFlippedHorizontally) {
+      flipHorizontallyAroundCenter();
+      isLookingRight = true;
+      isLookingLeft = false;
+      return;
+    }
+    if (!canWalkToRight()) {
+      return;
+    }
+    isWalking = true;
+    add(
+      MoveByEffect(
+        Vector2(33, 0),
+        EffectController(duration: 1),
+        onComplete: () {
+          isWalking = false;
+          isFalling = canFall();
+        },
+      ),
+    );
+  }
+
+  void walkToLeft() {
+    if (!isFlippedHorizontally) {
+      flipHorizontallyAroundCenter();
+      isLookingLeft = true;
+      isLookingRight = false;
+      return;
+    }
+    if (!canWalkToLeft()) {
+      return;
+    }
+    isWalking = true;
+    add(
+      MoveByEffect(
+        Vector2(-33, 0),
+        EffectController(duration: 1),
+        onComplete: () {
+          isWalking = false;
+          isFalling = canFall();
+        },
+      ),
+    );
+  }
+
   bool canWalkToRight() {
-    if (position.x == gameWidth - size.x) {
+    if (position.x >= gameWidth - size.x - size.x) {
       return false;
     }
-    if (isJumping) {
+    if (isJumping || isWalking) {
       return false;
     }
     bool canWalk = true;
-    gameRef.componentsAtPoint(Vector2(position.x + 33, position.y+18)).forEach((element) {
+    final positionRight = Vector2(position.x + size.x + 1, position.y + 18);
+    gameRef.componentsAtPoint(positionRight).forEach((element) {
       if (element is Box) {
         canWalk = false;
       }
@@ -84,27 +154,26 @@ class Player extends SpriteComponent
     if (position.x <= 33) {
       return false;
     }
-    if (isJumping) {
+    if (isJumping || isWalking) {
       return false;
     }
     bool canWalk = true;
-    gameRef.componentsAtPoint(Vector2(position.x + 64, position.y+18)).forEach((element) {
-      if (element is Box) {
-        canWalk = false;
-      }
-    });
+    gameRef
+        .componentsAtPoint(Vector2(position.x + 64, position.y + 18))
+        .forEach((element) {
+          if (element is Box) {
+            canWalk = false;
+          }
+        });
     return canWalk;
   }
 
   bool canFall() {
-    if (isOnGround) {
-      return false;
-    }
-    if (isJumping) {
+    if (isOnGround || isJumping) {
       return false;
     }
     bool canFall = true;
-    final positionUnderRight = Vector2(position.x, position.y + size.y);
+    final positionUnderRight = Vector2(position.x + 1, position.y + size.y);
     final positionUnderLeft = Vector2(position.x - size.x, position.y + size.y);
     gameRef.componentsAtPoint(positionUnderRight).forEach((element) {
       if (element is Box) {

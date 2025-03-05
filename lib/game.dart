@@ -6,7 +6,6 @@ import 'package:biubox/droppable_item.dart';
 import 'package:biubox/ground.dart';
 import 'package:biubox/star.dart';
 import 'package:flame/components.dart';
-import 'package:flame/effects.dart';
 import 'package:flame/events.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
@@ -19,7 +18,6 @@ class MyGame extends FlameGame with KeyboardEvents, HasCollisionDetection {
   double _timeSinceLastCrane = 0;
   double _timeToNextCrane = 0;
   int _score = 0;
-  int currentPlayerPosition = playerPosition.x.toInt();
   bool isGameOver = false;
 
   final _scoreText = TextComponent(
@@ -87,7 +85,7 @@ class MyGame extends FlameGame with KeyboardEvents, HasCollisionDetection {
     _scoreText.text = 'Game Over! Final Score: $_score';
     _scoreText.position = Vector2(gameWidth / 2 - 100, gameHeight / 2 - 150);
     _score = 0;
-    Future.delayed(Duration(milliseconds: 2), () => pauseEngine());
+    Future.delayed(Duration(milliseconds: 50), () => pauseEngine());
   }
 
   @override
@@ -99,87 +97,39 @@ class MyGame extends FlameGame with KeyboardEvents, HasCollisionDetection {
     if (!isKeyDown) {
       return KeyEventResult.ignored;
     }
+
     switch (event.logicalKey) {
       case LogicalKeyboardKey.arrowLeft:
-        if (!_player.isFlippedHorizontally) {
-          _player.flipHorizontallyAroundCenter();
-          _player.isLookingLeft = true;
-          _player.isLookingRight = false;
-          return KeyEventResult.handled;
-        }
-        if (_player.isWalking || !_player.canWalkToLeft()) {
-          return KeyEventResult.ignored;
-        }
-        currentPlayerPosition -= 33;
-        _player.isWalking = true;
-        _player.add(
-          MoveByEffect(
-            Vector2(-33, 0),
-            EffectController(duration: 1),
-            onComplete: () {
-              _player.isWalking = false;
-              _player.isFalling = _player.canFall();
-            },
-          ),
-        );
-        return KeyEventResult.handled;
-
+        _player.walkToLeft();
+        break;
       case LogicalKeyboardKey.arrowRight:
-        if (_player.isFlippedHorizontally) {
-          _player.flipHorizontallyAroundCenter();
-          _player.isLookingRight = true;
-          _player.isLookingLeft = false;
-          return KeyEventResult.handled;
-        }
-        if (_player.isWalking || !_player.canWalkToRight()) {
-          return KeyEventResult.ignored;
-        }
-        currentPlayerPosition += 33;
-        _player.isWalking = true;
-        _player.add(
-          MoveByEffect(
-            Vector2(33, 0),
-            EffectController(duration: 1),
-            onComplete: () {
-              _player.isWalking = false;
-              _player.isFalling = _player.canFall();
-            },
-          ),
-        );
-        return KeyEventResult.handled;
-      // Jumpping
+        _player.walkToRight();
+        break;
       case LogicalKeyboardKey.arrowUp:
-        if (_player.isJumping || _player.isFalling) {
-          return KeyEventResult.ignored;
-        }
-        _player.isJumping = true;
-        _player.isFalling = false;
-        _player.isOnGround = false;
-        Future.delayed(Duration(milliseconds: 500), () {
-          _player.isFalling = true;
-          _player.isJumping = false;
-        });
-        return KeyEventResult.handled;
+        _player.jump();
+        break;
       case LogicalKeyboardKey.space:
-        if (paused) {
-          Future.delayed(Duration(milliseconds: 2), () => resumeEngine());
-          _pausedText.text = '';
-          if (isGameOver) {
-            isGameOver = false;
-            _removeAllBoxes();
-          }
-        } else {
-          Future.delayed(Duration(milliseconds: 2), () => pauseEngine());
-          _pausedText.position = Vector2(
-            gameWidth / 2 - 20,
-            gameHeight / 2 - 100,
-          );
-          _pausedText.text = 'Paused';
-        }
-        return KeyEventResult.handled;
-      default:
-        return KeyEventResult.ignored;
+        _gamePause();
+        break;
     }
+    return KeyEventResult.ignored;
+  }
+
+  void _gamePause() {
+    if (paused) {
+      Future.delayed(Duration(milliseconds: 50), () => resumeEngine());
+      _pausedText.text = '';
+      if (isGameOver) {
+        isGameOver = false;
+        _removeAllBoxes();
+        _scoreText.text = 'Score: 0';
+        _scoreText.position = Vector2(gameWidth / 2 - 20, gameHeight / 2 - 150);
+      }
+      return;
+    }
+    Future.delayed(Duration(milliseconds: 50), () => pauseEngine());
+    _pausedText.text = 'Paused';
+    _pausedText.position = Vector2(gameWidth / 2 - 20, gameHeight / 2 - 100);
   }
 
   @override
