@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:biubox/crane.dart';
 import 'package:biubox/player.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MyGame extends FlameGame with KeyboardEvents, HasCollisionDetection {
   final Player _player = Player();
@@ -80,12 +81,24 @@ class MyGame extends FlameGame with KeyboardEvents, HasCollisionDetection {
     _scoreText.text = 'Score: $_score';
   }
 
-  void gameOver() {
+  void gameOver() async {
+    int maxScoreSaved = await _getMaxScoreRegistered();
+    if (_score > maxScoreSaved) {
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setInt('maxScore', _score);
+    }
     isGameOver = true;
-    _scoreText.text = 'Game Over! Final Score: $_score';
+    _scoreText.text =
+        "Game Over!\nFinal Score: $_score\nYour Record: $maxScoreSaved";
     _scoreText.position = Vector2(gameWidth / 2 - 100, gameHeight / 2 - 150);
     _score = 0;
     Future.delayed(Duration(milliseconds: 50), () => pauseEngine());
+  }
+
+  Future<int> _getMaxScoreRegistered() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final int maxScore = (prefs.getInt('maxScore')) ?? 0;
+    return maxScore;
   }
 
   @override

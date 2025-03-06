@@ -35,7 +35,7 @@ class Player extends SpriteComponent
       position.y += 1;
     }
     if (isJumping) {
-      position.y -= 1.5;
+      position.y -= 2;
     }
     super.update(dt);
   }
@@ -79,7 +79,7 @@ class Player extends SpriteComponent
     isJumping = true;
     isFalling = false;
     isOnGround = false;
-    Future.delayed(Duration(milliseconds: 500), () {
+    Future.delayed(Duration(milliseconds: 400), () {
       if (!isOnGround) {
         isFalling = true;
         isJumping = false;
@@ -141,7 +141,7 @@ class Player extends SpriteComponent
       return false;
     }
     bool canWalk = true;
-    final positionRight = Vector2(position.x + size.x + 1, position.y + 18);
+    final positionRight = Vector2((position.x + size.x + 1).round() * 1.0, position.y + 18);
     gameRef.componentsAtPoint(positionRight).forEach((element) {
       if (element is Box) {
         canWalk = false;
