@@ -13,8 +13,14 @@ class Star extends DroppableItem {
 
   @override
   Future<void> onLoad() async {
-    sprite = await Sprite.load('star.png');
-    hitbox = RectangleHitbox();
+    final sprites = [1, 2, 3, 4].map((i) => Sprite.load('star_frame_$i.png'));
+    final animation = SpriteAnimation.spriteList(
+      await Future.wait(sprites),
+      stepTime: 0.3,
+    );
+    this.animation = animation;
+    hitbox = RectangleHitbox(size: boxSize)
+    ..renderShape = false;
     add(hitbox);
     return super.onLoad();
   }
