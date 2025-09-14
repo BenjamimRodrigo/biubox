@@ -40,12 +40,10 @@ class DroppableItem extends SpriteComponent
         isFalling = true;
       }
     }
-    if (isFalling) {
-      position.y += 2;
-    }
-    if (isOnCrane) {
-      position.x += 3;
-    }
+    
+    if (isFalling) position.y += 2;
+    if (isOnCrane) position.x += 1;
+
     if (position.x > gameWidth) {
       gameRef.remove(this);
     }

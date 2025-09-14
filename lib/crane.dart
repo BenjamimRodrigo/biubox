@@ -7,6 +7,7 @@ import 'package:biubox/game.dart';
 
 class Crane extends SpriteComponent with HasGameRef<MyGame> {
   double positionToFreeItem = 0;
+
   @override
   Future<void> onLoad() async {
     sprite = await Sprite.load('crane.png');
@@ -34,7 +35,7 @@ class Crane extends SpriteComponent with HasGameRef<MyGame> {
       gameRef.remove(this);
       return;
     }
-    position.x += 3;
+    position.x += 1;
     super.update(dt);
   }
 }

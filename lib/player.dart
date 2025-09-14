@@ -7,7 +7,7 @@ import 'package:flame/components.dart';
 import 'package:biubox/game.dart';
 import 'package:flame/effects.dart';
 
-class Player extends SpriteComponent
+class Player extends SpriteAnimationComponent
     with HasGameRef<MyGame>, KeyboardHandler, CollisionCallbacks {
   Player({super.position});
 
@@ -22,9 +22,15 @@ class Player extends SpriteComponent
 
   @override
   Future<void> onLoad() async {
-    sprite = await Sprite.load('player.png');
+    final sprites = [1, 2, 3, 4].map((i) => Sprite.load('idle_player_$i.png'));
+    final animation = SpriteAnimation.spriteList(
+      await Future.wait(sprites),
+      stepTime: 0.1,
+    );
+    this.animation = animation;
     size = playerSize;
-    hitbox = RectangleHitbox()..renderShape = false;
+
+    hitbox = RectangleHitbox(size: Vector2(32, 32))..renderShape = false;
     add(hitbox);
     return super.onLoad();
   }
@@ -60,6 +66,10 @@ class Player extends SpriteComponent
       }
       if (isFalling && !other.isFalling) {
         isFalling = false;
+        return;
+      }
+      if (!other.isFalling && isWalking) {
+        isWalking = false;
         return;
       }
     } else if (other is Star) {
@@ -141,7 +151,10 @@ class Player extends SpriteComponent
       return false;
     }
     bool canWalk = true;
-    final positionRight = Vector2((position.x + size.x + 1).round() * 1.0, position.y + 18);
+    final positionRight = Vector2(
+      (position.x + size.x + 1).round() * 1.0,
+      position.y + 18,
+    );
     gameRef.componentsAtPoint(positionRight).forEach((element) {
       if (element is Box) {
         canWalk = false;
