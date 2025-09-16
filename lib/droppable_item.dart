@@ -5,7 +5,7 @@ import 'package:biubox/ground.dart';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 
-class DroppableItem extends SpriteComponent
+class DroppableItem extends SpriteAnimationComponent
     with HasGameRef<MyGame>, CollisionCallbacks {
   final double positionToFree;
 
@@ -40,7 +40,7 @@ class DroppableItem extends SpriteComponent
         isFalling = true;
       }
     }
-    
+
     if (isFalling) position.y += 2;
     if (isOnCrane) position.x += 1;
 

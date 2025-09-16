@@ -19,7 +19,7 @@ class Star extends DroppableItem {
       stepTime: 0.3,
     );
     this.animation = animation;
-    hitbox = RectangleHitbox(size: boxSize)
+    hitbox = RectangleHitbox(size: Vector2(boxSize.x - 1, boxSize.y - 1))
     ..renderShape = false;
     add(hitbox);
     return super.onLoad();

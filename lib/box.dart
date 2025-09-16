@@ -2,6 +2,7 @@ import 'package:biubox/constants.dart';
 import 'package:biubox/droppable_item.dart';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
+import 'package:flutter/material.dart';
 
 class Box extends DroppableItem {
   Box({required super.positionToFree}) {
@@ -17,9 +18,16 @@ class Box extends DroppableItem {
 
   @override
   Future<void> onLoad() async {
-    sprite = await Sprite.load('box.png');
-    hitbox = RectangleHitbox();
-    add(hitbox);
+    final sprites = [1].map((i) => Sprite.load('box.png'));
+    final animation = SpriteAnimation.spriteList(
+      await Future.wait(sprites),
+      stepTime: 0.1,
+    );
+    this.animation = animation;
+    hitbox = RectangleHitbox(size: Vector2(boxSize.x - 1, boxSize.y - 1))
+    ..renderShape = false;
+    hitbox.setColor(Colors.red);
+    add(hitbox); 
     return super.onLoad();
   }
 

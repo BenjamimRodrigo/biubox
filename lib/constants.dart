@@ -3,8 +3,10 @@ import 'package:flame/extensions.dart';
 final gameWidth = 858.0;
 final gameHeight = 512.0;
 
+final volume = 0.5;
+
 final playerSize = Vector2(33, 64);
-final playerPosition = Vector2(gameWidth/2, gameHeight - playerSize.y - 1);
+final playerPosition = Vector2(0, gameHeight - playerSize.y - 10);
 
 final craneSize = Vector2(33, 33);
 final cranePosition = Vector2(-100, -5);

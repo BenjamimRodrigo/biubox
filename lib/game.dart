@@ -8,6 +8,7 @@ import 'package:biubox/star.dart';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/game.dart';
+import 'package:flame_audio/flame_audio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:biubox/crane.dart';
@@ -41,6 +42,7 @@ class MyGame extends FlameGame with KeyboardEvents, HasCollisionDetection {
   Future<void> onLoad() async {
     // Player component
     _player.position = playerPosition;
+    print('Player position: ${_player.position}');
     add(_player);
 
     // Score component
@@ -53,27 +55,48 @@ class MyGame extends FlameGame with KeyboardEvents, HasCollisionDetection {
 
     // Ground
     add(Ground());
+
+    // Initial line of boxes
+    // addLineBox();
+
+    // add(Box(positionToFree: 33));
+    // add(Star(positionToFree: 66));
+
     return super.onLoad();
   }
 
-  void verifyIfLastLineComplete() {
-    bool itemAtPosition = false;
-    for (double i = 0; i < gameWidth; i += 33) {
-      final position = Vector2(i, gameHeight - boxSize.y);
-      final itemsAtPosition = componentsAtPoint(position);
-      itemAtPosition = false;
-      for (final item in itemsAtPosition) {
-        if (item is DroppableItem) {
-          itemAtPosition = true;
-          break;
-        }
+  void addLineBox() {
+    for (double position = 0; position < gameWidth; position += boxSize.x) {
+      if (position != 0) {
+        add(Box.positioned(Vector2(position, gameHeight - boxSize.y + 1)));
       }
+    }
+  }
+
+  void verifyIfLastLineComplete() {
+    print('Verifying last line complete...');
+    bool itemAtPosition = false;
+    for (double i = 0; i < gameWidth; i += boxSize.x) {
+      final position = Vector2(i, gameHeight - boxSize.y + 1);
+      itemAtPosition = _isADroppableItemAtPosition(position);
       if (!itemAtPosition) {
+        print('Line not complete! Position $position is empty.');
         return;
       }
     }
+    print('Last line complete!');
     _removeAllItemsAtLastLine();
     _moveDownAllItems();
+  }
+
+  bool _isADroppableItemAtPosition(Vector2 position) {
+    final itemsAtPosition = componentsAtPoint(position);
+    for (final item in itemsAtPosition) {
+      if (item is DroppableItem) {
+        return true;
+      }
+    }
+    return false;
   }
 
   void incrementScore(int score) {
@@ -119,6 +142,9 @@ class MyGame extends FlameGame with KeyboardEvents, HasCollisionDetection {
         _player.walkToRight();
         break;
       case LogicalKeyboardKey.arrowUp:
+        if(!_player.isJumping && !_player.isFalling) {
+          FlameAudio.play('jump.wav', volume: volume);
+        }
         _player.jump();
         break;
       case LogicalKeyboardKey.space:

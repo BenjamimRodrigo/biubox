@@ -4,8 +4,10 @@ import 'package:biubox/ground.dart';
 import 'package:biubox/star.dart';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
+import 'package:flame_audio/flame_audio.dart';
 import 'package:biubox/game.dart';
 import 'package:flame/effects.dart';
+import 'package:flutter/material.dart';
 
 class Player extends SpriteAnimationComponent
     with HasGameRef<MyGame>, KeyboardHandler, CollisionCallbacks {
@@ -29,9 +31,14 @@ class Player extends SpriteAnimationComponent
     );
     this.animation = animation;
     size = playerSize;
+    isFalling = true;
 
-    hitbox = RectangleHitbox(size: Vector2(32, 32))..renderShape = false;
+    hitbox =
+        RectangleHitbox(size: Vector2(playerSize.x - 1, playerSize.y - 1))
+          ..renderShape = false;
+
     add(hitbox);
+    print('Player hitbox position: ${hitbox.position}');
     return super.onLoad();
   }
 
@@ -57,6 +64,7 @@ class Player extends SpriteAnimationComponent
         gameRef.incrementScore(scoreAtDestroyBox);
         isFalling = true;
         isJumping = false;
+        FlameAudio.play('hit.wav', volume: volume);
         return;
       }
       if (other.isFalling && !isJumping) {
@@ -75,6 +83,7 @@ class Player extends SpriteAnimationComponent
     } else if (other is Star) {
       gameRef.remove(other);
       gameRef.incrementScore(scoreAtGetStar);
+      FlameAudio.play('collect_item.wav', volume: volume);
     } else if (other is Ground) {
       isFalling = false;
       isOnGround = true;
