@@ -40,13 +40,22 @@ class MyGame extends FlameGame with KeyboardEvents, HasCollisionDetection {
 
   @override
   Future<void> onLoad() async {
+    // add background
+    final background = SpriteComponent()
+      ..sprite = await loadSprite('background.png')
+      ..size = Vector2(gameWidth, gameHeight)
+      ..position = Vector2(0, 0)
+      ..anchor = Anchor.topLeft;
+
+    add(background);
+    
     // Player component
     _player.position = playerPosition;
     print('Player position: ${_player.position}');
     add(_player);
 
     // Score component
-    _scoreText.position = Vector2(gameWidth / 2 - 20, gameHeight / 2 - 150);
+    _scoreText.position = Vector2(gameWidth / 2 - 20, gameHeight / 2 - 100);
     add(_scoreText);
     incrementScore(0);
 
