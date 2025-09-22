@@ -9,6 +9,9 @@ Biubox é um jogo inspirado no clássico Stack Attack (Siemens, 2003), recriado 
 - Colete estrelas para pontos extras
 - Evite que as caixas cheguem ao topo
 
+## 🎮 Preview
+![Biubox Gameplay](assets/images/game_running.png)
+
 ## 🕹️ Controles
 - Setas ←/→: Movimentação (propositalmente lenta, estilo retrô)
 - Seta ↑: Pulo
