@@ -1,22 +1,59 @@
-# Biubox Game
+# Biubox Game 🎮
 
-Biubox é um jogo que foi inspirado num outro joguinho chamado Stack Attack, lançado em 2003 para os celulares da Siemens.
-Nessa época, jogar em aparelhos móveis era uma experiência semelhante a jogar em um Atari.
-Os comandos são simples. Basta utilizar as setas para movimentar o personagem.
-O objetivo é fazer pontos, podendo combinar todas as caixas na horizontal; estourá-las pulando contra elas; etc.
-A movimentação é bastante lenta, emulando perfeitamente o jogo nos antigos celulares Siemes A55.
-Stack Attack era um jogo extremamente difícil se comparado a jogos dos dias atuais. Um verdadeiro exercício de paciência.
-Este jogo é ideal para matar a nostalgia daquele seu antigo celular.
+## 📱 Sobre o Projeto
+Biubox é um jogo inspirado no clássico Stack Attack (Siemens, 2003), recriado em Flutter + Flame. Uma viagem nostálgica aos primórdios dos jogos mobile, quando jogar em celulares era uma experiência similar ao Atari.
 
-## Getting Started
+## 🎯 Objetivo
+- Faça pontos combinando caixas na horizontal
+- Estoure caixas pulando contra elas
+- Colete estrelas para pontos extras
+- Evite que as caixas cheguem ao topo
 
-This project is a starting point for a Flutter application.
+## 🕹️ Controles
+- Setas ←/→: Movimentação (propositalmente lenta, estilo retrô)
+- Seta ↑: Pulo
+- Espaço: Pausar/Continuar
 
-A few resources to get you started if this is your first Flutter project:
+## 🛠️ Tecnologias
+- Flutter
+- Flame Engine
+- SharedPreferences (sistema de recordes)
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## ⚙️ Instalação
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+1. Certifique-se de ter o Flutter instalado
+2. Clone o repositório
+3. Execute os comandos:
+```bash
+flutter pub get
+flutter run
+```
+
+Para rodar na web:
+```bash
+flutter run -d chrome
+```
+
+## 📂 Estrutura Principal
+- `lib/main.dart` - Ponto de entrada
+- `lib/game.dart` - Motor do jogo
+- `lib/player.dart` - Lógica do jogador
+- `lib/box.dart` - Sistema de caixas
+- `lib/star.dart` - Sistema de estrelas
+- `lib/crane.dart` - Sistema de guindastes
+
+## 🎮 Gameplay
+O jogo emula perfeitamente a experiência do Stack Attack original do Siemens A55, incluindo:
+- Movimentação característica
+- Sistema de pontuação desafiador
+- Dificuldade crescente
+- Mecânicas nostálgicas
+
+## 💡 Nota Histórica
+Stack Attack (2003) era conhecido por sua dificuldade elevada comparado aos jogos atuais, sendo um verdadeiro exercício de paciência e habilidade. Este remake busca preservar essa experiência única dos primeiros jogos mobile.
+
+## 🤝 Contribuição
+Contribuições são bem-vindas! Sinta-se à vontade para:
+- Reportar bugs
+- Sugerir melhorias
+- Enviar pull requests
