@@ -5,6 +5,8 @@ final gameHeight = 512.0;
 
 final volume = 0.5;
 
+final scoreTextPosition = Vector2(gameWidth / 2 - 100, gameHeight / 2 - 100);
+
 final playerSize = Vector2(33, 64);
 final playerPosition = Vector2(0, gameHeight - playerSize.y - 10);
 

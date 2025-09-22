@@ -55,7 +55,7 @@ class MyGame extends FlameGame with KeyboardEvents, HasCollisionDetection {
     add(_player);
 
     // Score component
-    _scoreText.position = Vector2(gameWidth / 2 - 20, gameHeight / 2 - 100);
+    _scoreText.position = scoreTextPosition;
     add(_scoreText);
     incrementScore(0);
 
@@ -122,7 +122,7 @@ class MyGame extends FlameGame with KeyboardEvents, HasCollisionDetection {
     isGameOver = true;
     _scoreText.text =
         "Game Over!\nFinal Score: $_score\nYour Record: $maxScoreSaved";
-    _scoreText.position = Vector2(gameWidth / 2 - 100, gameHeight / 2 - 150);
+    _scoreText.position = scoreTextPosition;
     _score = 0;
     Future.delayed(Duration(milliseconds: 50), () => pauseEngine());
   }
